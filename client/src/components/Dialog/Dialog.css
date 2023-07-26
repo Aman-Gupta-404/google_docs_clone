@@ -1,0 +1,70 @@
+.dialog {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(245, 245, 245, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dialog_box {
+  width: 30%;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.dialog_heading {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.dialog_input {
+  width: 80%;
+  padding: 10px 10px;
+  font-size: 20px;
+  border-radius: 10px;
+
+  border: 0.8px solid #cccccc;
+  outline: 0.8px solid #cccccc;
+}
+
+.dialog_input:focus {
+  border: 0.8px solid #4885ed;
+  outline: 0.8px solid #4885ed;
+}
+
+.dialog_buttons {
+  display: flex;
+  justify-content: start;
+  gap: 20px;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.dialog_button-cancel {
+  padding: 5px 10px;
+  font-size: 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.dialog_button-create {
+  padding: 5px 10px;
+  font-size: 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #4885ed;
+  color: white;
+  cursor: pointer;
+}
