@@ -4,6 +4,7 @@ const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 var cors = require("cors");
+const path = require("path");
 
 const connectDB = require("./config/db");
 const Document = require("./models/document");
@@ -22,6 +23,13 @@ const io = new Server(server, {
     origin: "http://localhost:5173",
     credentials: true,
   },
+});
+
+// accessing static files
+app.use(express.static(path.join(__dirname, "./client/dist")));
+
+app.get("*", function (req, res) {
+  res.sendFile(path.join(__dirname, "./client/dist/index.html"));
 });
 
 // default valur for the document
@@ -43,13 +51,10 @@ const findOrCreateDoc = async (id, name) => {
 };
 
 // creating the end points
-// test route
-app.get("/test", (req, res) => {
-  res.send("this works!");
-});
 const documentRoutes = require("./routes/documentRoutes");
 app.use("/api/v1/document", documentRoutes);
 
+// socket io functions
 io.on("connection", (socket) => {
   console.log("connected");
   // function to get the document data
