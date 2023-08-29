@@ -44,7 +44,9 @@ function Editor() {
 
   useEffect(() => {
     // connecting to socket io
-    const s = io("http://localhost:9000/", {
+    // const s = io("http://localhost:9000/", {
+    const s = io("https://google-docs-clone-hy6f.onrender.com/", {
+      //change it to http://localhost:9000/ in local deployment
       withCredentials: true,
     });
     setSocket(s);

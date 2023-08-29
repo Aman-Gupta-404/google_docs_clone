@@ -1,35 +1,24 @@
 const express = require("express");
-const app = express();
-const http = require("http");
-const server = http.createServer(app);
-const { Server } = require("socket.io");
 var cors = require("cors");
+const dotenv = require("dotenv");
 const path = require("path");
-
 const connectDB = require("./config/db");
 const Document = require("./models/document");
-// settign up the dot env configuration
-const dotenv = require("dotenv");
-dotenv.config();
-const PORT = 9000 || process.env.PORT;
 
+const app = express();
 app.use(cors());
-// connecting the database
+app.use(express.json());
+dotenv.config();
 connectDB();
 
-// creating socket io connection
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    // origin: false,
-    credentials: true,
-  },
-});
-console.log(io);
+// creating the end points
+const documentRoutes = require("./routes/documentRoutes");
+app.use("/api/v1/document", documentRoutes);
 
 // ------------------------deployment---------------------------------
 const __dirname1 = path.resolve();
 if (process.env.NODE_ENV === "production") {
+  console.log("running the production version!");
   app.use(express.static(path.join(__dirname1, "/client/dist")));
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname1, "client", "dist", "index.html"));
@@ -45,8 +34,6 @@ const defaultValue = "";
 
 // function to create document
 const findOrCreateDoc = async (id, name) => {
-  console.log("this is invked");
-  // console.on();
   if (id == null) return;
 
   const document = await Document.findById(id);
@@ -60,10 +47,20 @@ const findOrCreateDoc = async (id, name) => {
   });
 };
 
-// creating the end points
-const documentRoutes = require("./routes/documentRoutes");
-app.use("/api/v1/document", documentRoutes);
+const PORT = 9000 || process.env.PORT;
+const server = app.listen(PORT, () => {
+  console.log("listening on *:" + PORT);
+});
 
+// ------------------ code for socket io------------------
+const io = require("socket.io")(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: "*",
+    // origin: false,
+    // credentials: true,
+  },
+});
 // socket io functions
 io.on("connection", (socket) => {
   console.log("connected", socket);
@@ -85,8 +82,4 @@ io.on("connection", (socket) => {
       await Document.findByIdAndUpdate(document.documentId, { data });
     });
   });
-});
-
-server.listen(PORT, () => {
-  console.log("listening on *:" + PORT);
 });
