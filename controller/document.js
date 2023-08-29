@@ -24,6 +24,7 @@ const deleteDoc = async (req, res) => {
 };
 
 const getAllDocs = async (req, res) => {
+  console.log("entered here!");
   try {
     const allDocs = await Document.find();
 

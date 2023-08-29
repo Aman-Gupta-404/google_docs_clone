@@ -68,16 +68,23 @@ function FilesPage() {
   useEffect(() => {
     const getAllDocs = () => {
       setLoading(true);
-      axios.get("http://localhost:9000/api/v1/document/get").then((res) => {
-        console.log(res.data);
-        if (res.data.error) {
+      console.log("getting docs");
+      axios
+        .get("/api/v1/document/get")
+        .then((res) => {
+          console.log("response is: ", res.data);
+          if (res.data.error) {
+            setLoading(false);
+            return;
+          }
+          setDocsList([...res.data.docs]);
           setLoading(false);
           return;
-        }
-        setDocsList([...res.data.docs]);
-        setLoading(false);
-        return;
-      });
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log(err);
+        });
     };
     getAllDocs();
   }, []);
