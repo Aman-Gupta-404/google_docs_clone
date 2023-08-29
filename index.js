@@ -11,7 +11,7 @@ const Document = require("./models/document");
 // settign up the dot env configuration
 const dotenv = require("dotenv");
 dotenv.config();
-const PORT = 9000;
+const PORT = 9000 || process.env.PORT;
 
 app.use(cors());
 // connecting the database
@@ -21,22 +21,32 @@ connectDB();
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
+    // origin: false,
     credentials: true,
   },
 });
+console.log(io);
 
-// accessing static files
-app.use(express.static(path.join(__dirname, "./client/dist")));
+// ------------------------deployment---------------------------------
+const __dirname1 = path.resolve();
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname1, "/client/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname1, "client", "dist", "index.html"));
+  });
+} else {
+  app.get("/", (req, res) => {
+    res.send("API running successfully");
+  });
+}
+// ------------------------deployment---------------------------------
 
-app.get("*", function (req, res) {
-  res.sendFile(path.join(__dirname, "./client/dist/index.html"));
-});
-
-// default valur for the document
 const defaultValue = "";
 
 // function to create document
 const findOrCreateDoc = async (id, name) => {
+  console.log("this is invked");
+  // console.on();
   if (id == null) return;
 
   const document = await Document.findById(id);
@@ -56,7 +66,7 @@ app.use("/api/v1/document", documentRoutes);
 
 // socket io functions
 io.on("connection", (socket) => {
-  console.log("connected");
+  console.log("connected", socket);
   // function to get the document data
   socket.on("get-document", async (document) => {
     const _document = await findOrCreateDoc(
@@ -78,5 +88,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(PORT, () => {
-  console.log("listening on *:3000");
+  console.log("listening on *:" + PORT);
 });

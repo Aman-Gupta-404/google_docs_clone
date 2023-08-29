@@ -6,7 +6,8 @@
   "proxy": "http://localhost:9000/",
   "scripts": {
     "start": "node index.js",
-    "build": "npm install && cd client && npm install && npm run build",
+    "dev": "nodemon index.js",
+    "build": "npm install --legacy-peer-deps && npm install --legacy-peer-deps --prefix client && npm run build --prefix client",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
